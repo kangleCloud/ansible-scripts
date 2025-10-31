@@ -3,7 +3,7 @@
 # This file orchestrates the basic server setup tasks
     
 - name: "Configure hostname settings"
-  : set-hostname.yml
+  include_tasks: set-hostname.yml
 
 - name: "Configure package repositories"
   include_tasks: config-repo.yml

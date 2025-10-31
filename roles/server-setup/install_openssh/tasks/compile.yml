@@ -34,3 +34,8 @@
   command: make
   args:
     chdir: "{{ LINUX_SRC_PATH }}/{{ OPENSSH_SRC }}"
+
+- name: make openssh install
+  command: make install
+  args:
+    chdir: "{{ LINUX_SRC_PATH }}/{{ OPENSSH_SRC }}"

@@ -15,3 +15,4 @@
       X11Forwarding yes
       X11UseLocalhost no
       XAuthLocation /usr/bin/xauth
+      KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521

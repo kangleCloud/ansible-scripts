@@ -2,21 +2,21 @@
 # Backup existing OpenSSH configuration and binaries
 
 - name: Bak conf of ssh
-  shell: 'cp -r /etc/ssh /etc/ssh.bak_$(date "+%Y%m%d")'
+  shell: mv /etc/ssh /etc/ssh.bak_$(date "+%Y%m%d")
   ignore_errors: true
 
 - name: Bak conf of pam.d_sshd
-  shell: 'cp /etc/pam.d/sshd /etc/pam.d/sshd.bak_$(date "+%Y%m%d")'
+  shell: 'mv /etc/pam.d/sshd /etc/pam.d/sshd.bak_$(date "+%Y%m%d")'
   ignore_errors: true
 
 - name: Bak exe of ssh
-  shell: 'cp /usr/bin/ssh /usr/bin/ssh.bak_$(date "+%Y%m%d")'
+  shell: 'mv /usr/bin/ssh /usr/bin/ssh.bak_$(date "+%Y%m%d")'
   ignore_errors: true
 
 - name: Bak exe of sshd
-  shell: 'cp /usr/sbin/sshd /usr/sbin/sshd.bak_$(date "+%Y%m%d")'
+  shell: 'mv /usr/sbin/sshd /usr/sbin/sshd.bak_$(date "+%Y%m%d")'
   ignore_errors: true
 
 - name: Bak exe of ssh-keygen
-  shell: 'cp /usr/bin/ssh-keygen /usr/bin/ssh-keygen.bak_$(date "+%Y%m%d")'
+  shell: 'mv /usr/bin/ssh-keygen /usr/bin/ssh-keygen.bak_$(date "+%Y%m%d")'
   ignore_errors: true

@@ -5,6 +5,8 @@
   
 - name: install Development tools
   shell: 'yum groupinstall "Development tools" -y'
+  register: dev_tools_install
+  ignore_errors: true
 
 - name: install  python3-libselinux
   yum:

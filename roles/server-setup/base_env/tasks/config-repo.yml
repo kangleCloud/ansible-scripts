@@ -4,6 +4,7 @@
     dest: "{{ item.dest }}"
     force: yes
   with_items: "{{ centos_repo_files }}"
+  # Only run this task on CentOS systems
   when: ansible_distribution == "CentOS"
 
 - name: Clean repo cache

@@ -4,19 +4,13 @@
 
 # Backup existing sshd service files before replacement
 - name: Backup sshd.service from /etc/systemd/system
-  copy:
-    src: /etc/systemd/system/sshd.service
-    dest: "/etc/systemd/system/sshd.service.bak_{{ ansible_date_time.date }}"
-    remote_src: true
-    backup: true
+  shell: mv /etc/systemd/system/sshd.service /etc/systemd/system/sshd.service.bak_$(date "+%Y%m%d")
+  register: backup_etc_systemd_system_sshd_service
   ignore_errors: true
 
 - name: Backup sshd.service from /usr/lib/systemd/system
-  copy:
-    src: /usr/lib/systemd/system/sshd.service
-    dest: "/usr/lib/systemd/system/sshd.service.bak_{{ ansible_date_time.date }}"
-    remote_src: true
-    backup: true
+  shell: mv /usr/lib/systemd/system/sshd.service  /usr/lib/systemd/system/sshd.service.bak_$(date "+%Y%m%d")
+  register: backup_usr_lib_systemd_system_sshd_service
   ignore_errors: true
 
 # Copy SSH configuration files using copy module
@@ -34,7 +28,7 @@
     src: "{{ LINUX_SRC_PATH }}/{{ OPENSSH_SRC }}/contrib/redhat/sshd.pam"
     dest: /etc/pam.d/sshd
     remote_src: true
-    mode: '0644'
+    mode: '0755'
     owner: root
     group: root
 
