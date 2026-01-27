@@ -1,0 +1,24 @@
+- name: Configure Prometheus Node Exporter Service
+  blockinfile:
+    path: /etc/systemd/system/prometheus_node_exporter.service
+    create: true
+    marker: '# {mark} ANSIBLE MANAGED BLOCK'
+    block: |
+      [Unit]
+      Description=Prometheus Node Exporter
+      Documentation=https://prometheus.io/docs/guides/node-exporter/
+      After=network.target
+
+      [Service]
+      Type=simple
+      User=root
+      Group=root
+      ExecStart={{ NODE_EXPORTER_INSTALL_PATH }}/node_exporter \
+        --web.listen-address=:9100
+      Restart=on-failure
+      SuccessExitStatus=0
+      SyslogIdentifier=prometheus
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target

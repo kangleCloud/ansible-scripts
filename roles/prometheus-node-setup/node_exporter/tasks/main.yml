@@ -1,0 +1,8 @@
+- name: "Init Prometheus Node Exporter Setup"
+  include_tasks: init-node-exporter.yml
+
+- name: "Configure Prometheus Node Exporter Service"
+  include_tasks: configure-node-exporter-service.yml
+
+- name: "Enable and Start Prometheus Node Exporter Service"
+  include_tasks: enable-start-node-exporter-service.yml

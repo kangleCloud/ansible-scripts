@@ -1,0 +1,32 @@
+ - name: 确保创建 prometheus-exporters 目录
+   ansible.builtin.file:
+     path: "{{ LINUX_SRC_PATH }}/prometheus-exporters"
+     state: directory
+     mode: "0755"
+
+ - name: 确保安装目录存在
+   ansible.builtin.file:
+     path: "{{ LINUX_INSTALL_PATH }}"
+     state: directory
+     mode: "0755"
+   become: true
+
+ - name: 检查是否已解压 node_exporter
+   ansible.builtin.stat:
+     path: "{{ LINUX_SRC_PATH }}/prometheus-exporters/{{ NODE_EXPORTER_SRC }}"
+   register: node_exporter_src_dir
+
+ - name: 解压 node_exporter 源码归档
+   ansible.builtin.unarchive:
+     src: "{{ SOFTWARE_PATH }}/{{ NODE_EXPORTER_SRC_ARCHIVE }}"
+     dest: "{{ LINUX_SRC_PATH }}/prometheus-exporters"
+     remote_src: true
+   when: not node_exporter_src_dir.stat.exists
+
+ - name: 移动 node_exporter 到安装路径
+   ansible.builtin.command:
+     cmd: mv "{{ LINUX_SRC_PATH }}/prometheus-exporters/{{ NODE_EXPORTER_SRC }}" "{{ NODE_EXPORTER_INSTALL_PATH }}"
+     creates: "{{ NODE_EXPORTER_INSTALL_PATH }}"
+   become: true
+
+
