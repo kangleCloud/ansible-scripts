@@ -1,0 +1,7 @@
+- name: Set yum proxy
+  lineinfile:
+    path: /etc/yum.conf
+    regexp: '^proxy=.*'
+    line: 'proxy=http://10.15.33.15:3328'
+    insertafter: EOF
+    state: present

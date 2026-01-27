@@ -2,6 +2,8 @@
 
 此脚本基于ansible-playbook role进行编写和实现的
 
+- 修改ansible.cfg中`host_key_checking = False`配置用于解决第一次需要ssh连接
+
 ## 支持的操作系统
 
 openEuler-22.03 LTS、Kylin Linux Advanced Server V10 (Lance)

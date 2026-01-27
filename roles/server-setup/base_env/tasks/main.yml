@@ -5,6 +5,9 @@
 - name: "Configure hostname settings"
   include_tasks: set-hostname.yml
 
+- name: "Configure proxy settings"
+  include_tasks: set-proxy.yml
+
 - name: "Configure package repositories"
   include_tasks: config-repo.yml
 

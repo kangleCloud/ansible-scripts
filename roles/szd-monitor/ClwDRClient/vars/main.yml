@@ -1,0 +1,3 @@
+OPENSSH_SRC_ARCHIVE: "openssh-10.0p2.tar.gz"
+OPENSSH_SRC: "openssh-10.0p1"
+OPENSSH_INSTALL_PATH: "{{ LINUX_INSTALL_PATH }}/openssh10.0"

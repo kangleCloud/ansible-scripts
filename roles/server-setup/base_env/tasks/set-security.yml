@@ -47,6 +47,7 @@
     replace: "SELINUX=disabled"
   register: is_reboot
 
+# Reboot if necessary
 - name: Reboot
   reboot:
     reboot_timeout: 300

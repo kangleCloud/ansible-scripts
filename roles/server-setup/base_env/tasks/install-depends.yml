@@ -1,6 +1,6 @@
 - name: install pkgs
   yum:
-    name: "gcc,gcc-c++,make,perl,perl-devel,net-tools,kernel-devel,openssl-devel,telnet,ntpdate,vim,lsof,htop,iotop,wget,lrzsz,ntp"
+    name: "gcc,gcc-c++,make,perl,perl-devel,net-tools,kernel-devel,openssl-devel,telnet,ntpdate,vim,lsof,htop,iotop,wget,lrzsz,ntp,nfs-utils"
     state: present
   
 - name: install Development tools
