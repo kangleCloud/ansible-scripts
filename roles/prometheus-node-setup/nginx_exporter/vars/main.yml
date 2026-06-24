@@ -1,0 +1,22 @@
+---
+NGINX_EXPORTER_VERSION: "1.5.1"
+NGINX_EXPORTER_SRC_ARCHIVE: "nginx-prometheus-exporter_{{ NGINX_EXPORTER_VERSION }}_linux_amd64.tar.gz"
+NGINX_EXPORTER_STAGE_PATH: "{{ LINUX_SRC_PATH }}/nginx-prometheus-exporter"
+NGINX_EXPORTER_INSTALL_DIR: "{{ LINUX_INSTALL_PATH }}/prometheus-exporters/nginx-prometheus-exporter_{{ NGINX_EXPORTER_VERSION }}"
+NGINX_EXPORTER_BIN: "{{ NGINX_EXPORTER_INSTALL_DIR }}/nginx-prometheus-exporter"
+NGINX_EXPORTER_SERVICE_NAME: "nginx-prometheus-exporter"
+NGINX_EXPORTER_SOCKET_NAME: "nginx-prometheus-exporter"
+NGINX_EXPORTER_SOCKET_PORT: 9113
+NGINX_EXPORTER_METRICS_URL: "http://127.0.0.1:{{ NGINX_EXPORTER_SOCKET_PORT }}/metrics"
+NGINX_EXPORTER_USER: "root"
+NGINX_EXPORTER_GROUP: "root"
+NGINX_PREFIX: "/usr/local/nginx1.30"
+NGINX_BIN: "{{ NGINX_PREFIX }}/sbin/nginx"
+NGINX_CONF_PATH: "{{ NGINX_PREFIX }}/conf/nginx.conf"
+NGINX_STATUS_CONF_DIR: "{{ NGINX_PREFIX }}/conf/conf.d"
+NGINX_STATUS_CONF: "{{ NGINX_STATUS_CONF_DIR }}/status.conf"
+NGINX_STATUS_PATH: "/nginx_status"
+NGINX_STATUS_URL: "http://127.0.0.1:80{{ NGINX_STATUS_PATH }}"
+NGINX_TEST_CMD: "{{ NGINX_BIN }} -t"
+NGINX_RELOAD_CMD: "{{ NGINX_BIN }} -s reload"
+install_nginx_exporter: false

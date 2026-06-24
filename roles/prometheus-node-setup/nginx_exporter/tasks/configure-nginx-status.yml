@@ -1,0 +1,97 @@
+---
+- name: Check nginx binary on remote host
+  ansible.builtin.stat:
+    path: "{{ NGINX_BIN }}"
+  register: nginx_binary
+
+- name: Fail when nginx binary is missing
+  ansible.builtin.fail:
+    msg: "Missing nginx binary: {{ NGINX_BIN }}"
+  when: not nginx_binary.stat.exists
+
+- name: Check nginx main configuration on remote host
+  ansible.builtin.stat:
+    path: "{{ NGINX_CONF_PATH }}"
+  register: nginx_conf
+
+- name: Fail when nginx main configuration is missing
+  ansible.builtin.fail:
+    msg: "Missing nginx main configuration: {{ NGINX_CONF_PATH }}"
+  when: not nginx_conf.stat.exists
+
+- name: Ensure nginx status configuration directory exists
+  ansible.builtin.file:
+    path: "{{ NGINX_STATUS_CONF_DIR }}"
+    state: directory
+    mode: "0755"
+
+- name: Check nginx conf.d include directive
+  ansible.builtin.shell: >-
+    grep -Eq '^[[:space:]]*include[[:space:]]+[^;]*conf\.d/[^;]*;'
+    {{ NGINX_CONF_PATH | quote }}
+  register: nginx_conf_include
+  changed_when: false
+  failed_when: false
+
+- name: Fail when nginx main configuration does not load conf.d
+  ansible.builtin.fail:
+    msg: >-
+      {{ NGINX_CONF_PATH }} does not include the conf.d directory.
+      Expected an include such as 'include conf/conf.d/*.conf;'.
+      Refusing to modify nginx.conf automatically.
+  when: nginx_conf_include.rc != 0
+
+- name: Deploy nginx status configuration
+  ansible.builtin.template:
+    src: status.conf.j2
+    dest: "{{ NGINX_STATUS_CONF }}"
+    owner: root
+    group: root
+    mode: "0644"
+  register: nginx_status_conf_result
+
+- name: Test nginx configuration
+  ansible.builtin.command:
+    cmd: "{{ NGINX_TEST_CMD }}"
+  register: nginx_test_result
+  changed_when: false
+  failed_when: false
+  when: not ansible_check_mode
+
+- name: Show nginx test error logs
+  ansible.builtin.debug:
+    msg: |-
+      nginx -t stdout:
+      {{ nginx_test_result.stdout | default('') }}
+      nginx -t stderr:
+      {{ nginx_test_result.stderr | default('') }}
+  when: not ansible_check_mode and nginx_test_result.rc != 0
+
+- name: Fail when nginx configuration test fails
+  ansible.builtin.fail:
+    msg: |-
+      nginx -t failed.
+      stdout:
+      {{ nginx_test_result.stdout | default('') }}
+      stderr:
+      {{ nginx_test_result.stderr | default('') }}
+  when: not ansible_check_mode and nginx_test_result.rc != 0
+
+- name: Reload nginx after successful configuration test
+  ansible.builtin.command:
+    cmd: "{{ NGINX_RELOAD_CMD }}"
+  when:
+    - not ansible_check_mode
+    - nginx_status_conf_result.changed
+
+- name: Verify nginx status endpoint
+  ansible.builtin.uri:
+    url: "{{ NGINX_STATUS_URL }}"
+    method: GET
+    return_content: true
+    status_code: 200
+    use_proxy: false
+  register: nginx_status_response
+  changed_when: false
+  failed_when: "'Active connections' not in (nginx_status_response.content | default(''))"
+  when: not ansible_check_mode

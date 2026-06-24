@@ -1,0 +1,59 @@
+---
+- name: Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: not ansible_check_mode
+
+- name: Enable and start nginx prometheus exporter socket
+  ansible.builtin.systemd:
+    name: "{{ NGINX_EXPORTER_SOCKET_NAME }}.socket"
+    enabled: true
+    state: "{{ 'restarted' if nginx_exporter_socket_unit.changed else 'started' }}"
+  when: not ansible_check_mode
+
+- name: Enable and start nginx prometheus exporter service
+  ansible.builtin.systemd:
+    name: "{{ NGINX_EXPORTER_SERVICE_NAME }}.service"
+    enabled: true
+    state: "{{ 'restarted' if (nginx_exporter_service_unit.changed or nginx_exporter_install_result.changed) else 'started' }}"
+  when: not ansible_check_mode
+
+- name: Verify nginx prometheus exporter socket status
+  ansible.builtin.command:
+    cmd: systemctl is-active "{{ NGINX_EXPORTER_SOCKET_NAME }}.socket"
+  register: nginx_exporter_socket_status
+  changed_when: false
+  failed_when: nginx_exporter_socket_status.stdout | trim != "active"
+  when: not ansible_check_mode
+
+- name: Show nginx prometheus exporter socket status
+  ansible.builtin.debug:
+    msg: "nginx-prometheus-exporter socket status: {{ nginx_exporter_socket_status.stdout | trim }}"
+  when: not ansible_check_mode
+
+- name: Verify nginx prometheus exporter service status
+  ansible.builtin.command:
+    cmd: systemctl is-active "{{ NGINX_EXPORTER_SERVICE_NAME }}.service"
+  register: nginx_exporter_service_status
+  changed_when: false
+  failed_when: nginx_exporter_service_status.stdout | trim != "active"
+  when: not ansible_check_mode
+
+- name: Show nginx prometheus exporter service status
+  ansible.builtin.debug:
+    msg: "nginx-prometheus-exporter service status: {{ nginx_exporter_service_status.stdout | trim }}"
+  when: not ansible_check_mode
+
+- name: Verify nginx prometheus exporter metrics endpoint
+  ansible.builtin.uri:
+    url: "{{ NGINX_EXPORTER_METRICS_URL }}"
+    method: GET
+    return_content: true
+    status_code: 200
+    use_proxy: false
+  register: nginx_exporter_metrics_response
+  changed_when: false
+  failed_when: >-
+    'nginx_' not in (nginx_exporter_metrics_response.content | default('')) and
+    'go_' not in (nginx_exporter_metrics_response.content | default(''))
+  when: not ansible_check_mode

@@ -1,0 +1,18 @@
+---
+- name: Deploy nginx prometheus exporter socket
+  ansible.builtin.template:
+    src: nginx-prometheus-exporter.socket.j2
+    dest: "/etc/systemd/system/{{ NGINX_EXPORTER_SOCKET_NAME }}.socket"
+    owner: root
+    group: root
+    mode: "0644"
+  register: nginx_exporter_socket_unit
+
+- name: Deploy nginx prometheus exporter service
+  ansible.builtin.template:
+    src: nginx-prometheus-exporter.service.j2
+    dest: "/etc/systemd/system/{{ NGINX_EXPORTER_SERVICE_NAME }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  register: nginx_exporter_service_unit

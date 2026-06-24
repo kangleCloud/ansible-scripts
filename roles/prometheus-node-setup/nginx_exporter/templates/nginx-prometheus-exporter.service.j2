@@ -1,0 +1,15 @@
+[Unit]
+Description=NGINX Prometheus Exporter
+Requires={{ NGINX_EXPORTER_SOCKET_NAME }}.socket
+After=network.target {{ NGINX_EXPORTER_SOCKET_NAME }}.socket
+
+[Service]
+Type=simple
+User={{ NGINX_EXPORTER_USER }}
+Group={{ NGINX_EXPORTER_GROUP }}
+ExecStart={{ NGINX_EXPORTER_BIN }} --nginx.scrape-uri={{ NGINX_STATUS_URL }} --web.systemd-socket
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

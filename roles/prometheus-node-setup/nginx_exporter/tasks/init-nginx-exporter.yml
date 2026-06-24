@@ -1,0 +1,39 @@
+---
+- name: Ensure nginx exporter source directory exists
+  ansible.builtin.file:
+    path: "{{ NGINX_EXPORTER_STAGE_PATH }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure nginx exporter install directory exists
+  ansible.builtin.file:
+    path: "{{ NGINX_EXPORTER_INSTALL_DIR }}"
+    state: directory
+    mode: "0755"
+
+- name: Check nginx exporter archive on remote host
+  ansible.builtin.stat:
+    path: "{{ SOFTWARE_PATH }}/{{ NGINX_EXPORTER_SRC_ARCHIVE }}"
+  register: nginx_exporter_archive
+
+- name: Fail when nginx exporter archive is missing
+  ansible.builtin.fail:
+    msg: >-
+      Missing archive {{ SOFTWARE_PATH }}/{{ NGINX_EXPORTER_SRC_ARCHIVE }}.
+      Upload the nginx prometheus exporter package to the remote host before running this playbook.
+  when: not nginx_exporter_archive.stat.exists
+
+- name: Extract nginx exporter archive
+  ansible.builtin.unarchive:
+    src: "{{ SOFTWARE_PATH }}/{{ NGINX_EXPORTER_SRC_ARCHIVE }}"
+    dest: "{{ NGINX_EXPORTER_INSTALL_DIR }}"
+    remote_src: true
+    creates: "{{ NGINX_EXPORTER_BIN }}"
+  register: nginx_exporter_install_result
+
+- name: Ensure nginx exporter binary is executable
+  ansible.builtin.file:
+    path: "{{ NGINX_EXPORTER_BIN }}"
+    owner: root
+    group: root
+    mode: "0755"

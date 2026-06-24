@@ -1,0 +1,12 @@
+---
+- name: "Init Nginx Exporter Setup"
+  include_tasks: init-nginx-exporter.yml
+
+- name: "Configure Nginx Status Endpoint"
+  include_tasks: configure-nginx-status.yml
+
+- name: "Configure Nginx Exporter Service"
+  include_tasks: configure-nginx-exporter-service.yml
+
+- name: "Enable and Start Nginx Exporter Service"
+  include_tasks: enable-start-nginx-exporter-service.yml
