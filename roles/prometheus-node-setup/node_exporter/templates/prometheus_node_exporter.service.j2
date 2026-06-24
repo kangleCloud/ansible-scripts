@@ -1,0 +1,18 @@
+[Unit]
+Description=Prometheus Node Exporter
+Documentation=https://prometheus.io/docs/guides/node-exporter/
+After=network.target
+
+[Service]
+Type=simple
+User={{ NODE_EXPORTER_USER }}
+Group={{ NODE_EXPORTER_GROUP }}
+ExecStart={{ NODE_EXPORTER_INSTALL_PATH }}/node_exporter \
+  --web.listen-address={{ NODE_EXPORTER_LISTEN_ADDRESS }}
+Restart=always
+RestartSec=5
+SuccessExitStatus=0
+SyslogIdentifier={{ NODE_EXPORTER_SERVICE_NAME }}
+
+[Install]
+WantedBy=multi-user.target

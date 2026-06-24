@@ -1,23 +1,35 @@
+---
 - name: Reload systemd manager configuration
-  command: systemctl daemon-reload
-  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
 
 - name: Enable Prometheus Node Exporter Service
-  systemd:
-    name: prometheus_node_exporter.service
-    enabled: yes
-  become: true
-  
+  ansible.builtin.systemd:
+    name: "{{ NODE_EXPORTER_SERVICE_NAME }}.service"
+    enabled: true
+
 - name: Start Prometheus Node Exporter Service
-  systemd:
-    name: prometheus_node_exporter.service
+  ansible.builtin.systemd:
+    name: "{{ NODE_EXPORTER_SERVICE_NAME }}.service"
     state: started
-  become: true
 
 - name: Verify Prometheus Node Exporter Service Status
-  systemd:
-    name: prometheus_node_exporter.service
-    state: started
+  ansible.builtin.command:
+    cmd: systemctl is-active "{{ NODE_EXPORTER_SERVICE_NAME }}"
   register: node_exporter_service_status
-  failed_when: not node_exporter_service_status.status.ActiveState == "active"
-  become: true
+  changed_when: false
+  failed_when: node_exporter_service_status.stdout | trim != "active"
+
+- name: Show Prometheus Node Exporter Service Status
+  ansible.builtin.debug:
+    msg: "prometheus_node_exporter status: {{ node_exporter_service_status.stdout | trim }}"
+
+- name: Check node_exporter listen port
+  ansible.builtin.shell: ss -lntp | grep 9100 || netstat -lntp | grep 9100
+  register: node_exporter_port_check
+  changed_when: false
+  failed_when: false
+
+- name: Show node_exporter listen port
+  ansible.builtin.debug:
+    var: node_exporter_port_check.stdout_lines
