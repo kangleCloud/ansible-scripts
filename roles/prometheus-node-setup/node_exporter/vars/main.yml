@@ -1,0 +1,3 @@
+NODE_EXPORTER_SRC_ARCHIVE: "node_exporter-1.10.2.linux-amd64.tar.gz"
+NODE_EXPORTER_SRC: "node_exporter-1.10.2.linux-amd64"
+NODE_EXPORTER_INSTALL_PATH: "{{ LINUX_INSTALL_PATH }}/node_exporter-1.10"
